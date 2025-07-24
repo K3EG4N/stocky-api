@@ -22,6 +22,64 @@ namespace Provider.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Models.Entities.Person", b =>
+                {
+                    b.Property<Guid>("PersonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PersonTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PersonId");
+
+                    b.HasIndex("PersonTypeId");
+
+                    b.ToTable("Person", "per");
+                });
+
+            modelBuilder.Entity("Models.Entities.PersonType", b =>
+                {
+                    b.Property<Guid>("PersonTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PersonTypeId");
+
+                    b.ToTable("PersonTypes", "per");
+                });
+
             modelBuilder.Entity("Models.Entities.Role", b =>
                 {
                     b.Property<Guid>("RoleId")
@@ -75,7 +133,18 @@ namespace Provider.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRole", "usr");
+                    b.ToTable("UserRoles", "usr");
+                });
+
+            modelBuilder.Entity("Models.Entities.Person", b =>
+                {
+                    b.HasOne("Models.Entities.PersonType", "Type")
+                        .WithMany()
+                        .HasForeignKey("PersonTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Models.Entities.UserRole", b =>
